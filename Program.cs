@@ -1,3 +1,5 @@
+using TAL.Net.Services;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -11,6 +13,8 @@ builder.Services.AddCors(p => p.AddPolicy("TALApp", builder =>
 {
     builder.WithOrigins("*").AllowAnyMethod().AllowAnyHeader();
 }));
+
+builder.Services.AddTransient<IPremiumCalculator, PremiumCalculator>();
 
 var app = builder.Build();
 
