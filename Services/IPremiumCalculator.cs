@@ -1,6 +1,8 @@
-﻿namespace TAL.Net.Services;
+﻿using TAL.Net.Models;
+
+namespace TAL.Net.Services;
 
 public interface IPremiumCalculator
 {
-    Tuple<decimal, decimal> CalculatePremiumAsync(decimal sumInsured, decimal occupationRating,int age);
+    Response CalculatePremiumAsync(decimal sumInsured, decimal occupationRating,int age);
 }

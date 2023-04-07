@@ -1,17 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.Text.Json;
 using TAL.Net.Models;
+using TAL.Net.Services;
 
 namespace TAL.Net.Controllers;
 
-public class HomeController : Controller
+[ApiController]
+[Route("Home")]
+public class HomeController : ControllerBase
 {
-    public IActionResult Index()
+    private readonly IPremiumCalculator _premiumCalculator;
+
+    public HomeController(IPremiumCalculator premiumCalculator)
     {
-        return View();
+        _premiumCalculator = premiumCalculator;
     }
 
-    [HttpGet("occupations")]
-    public ActionResult<IEnumerable<Occupation>> ListOccupations()
+
+    [HttpGet]
+    [Route("occupations")]
+    public IActionResult ListOccupations()
     {
         var occupations = new List<Occupation>
         {
@@ -24,6 +32,36 @@ public class HomeController : Controller
         };
 
         return Ok(occupations);
+    }
+
+
+    [HttpPost]
+    [Route("caluclatePremium")]
+    public async Task<IActionResult> CalculatePremium(PremiumCalculatorRequest premiumCalculator)
+    {
+        if (string.IsNullOrEmpty(premiumCalculator.SumInsured) || string.IsNullOrEmpty(premiumCalculator.OccupationRating)
+            || string.IsNullOrEmpty(premiumCalculator.Age))
+            return new BadRequestObjectResult("Invalid request.");
+
+        if (Convert.ToDecimal(premiumCalculator.SumInsured) == 0 || Convert.ToDecimal(premiumCalculator.OccupationRating) == 0
+            || Convert.ToInt32(premiumCalculator.Age) == 0)
+            return new BadRequestObjectResult("Request is invalid. Values must be greater than 0.");
+
+        var calculatedData =
+            _premiumCalculator.CalculatePremiumAsync(Convert.ToDecimal(premiumCalculator.SumInsured),
+            Convert.ToDecimal(premiumCalculator.OccupationRating), Convert.ToInt32(premiumCalculator.Age));
+
+        if (calculatedData == null)
+            return new BadRequestObjectResult("Error calculating the premium.");
+        
+
+        var result = JsonSerializer.Serialize(calculatedData, new JsonSerializerOptions
+        {
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            WriteIndented = true
+        });
+
+        return Ok(result);
     }
 
 }
