@@ -8,8 +8,8 @@
 # Implemented dot net core dependency injections.
 
 ## Running the code
-	* Clone repository
+* Clone this repository:
 ```
-		$ git clone https://github.com/abhinanda2491/TAL.Net.git
+    $ git clone https://github.com/abhinanda2491/TAL.Net.git
 ```
 # Build and Run the application
