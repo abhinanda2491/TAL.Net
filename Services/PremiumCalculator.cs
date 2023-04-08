@@ -15,14 +15,14 @@ public class PremiumCalculator : IPremiumCalculator
 
             return new Response()
             {
-                DeathPremium = deathPremium,
-                TPDPremiumMonthly = tpdPremiumMonthly
+                DeathPremium = Math.Round(deathPremium, 2, MidpointRounding.ToEven),
+                TPDPremiumMonthly = Math.Round(tpdPremiumMonthly, 2, MidpointRounding.ToEven)
             };
         }
         catch (Exception)
         {
             return null;
         }
-        
+
     }
 }
